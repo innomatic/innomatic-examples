@@ -397,7 +397,7 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
 
         // Prepare WUI events calls for panel actions.
         //
-        $editAction  = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ], [ 'action', 'edititem', [] ] ]);
+        $editAction  = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ], [ 'action', 'edititem', ['id' => $eventData['id']] ] ]);
         $abortAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ] ]);
 
         // Get item data.

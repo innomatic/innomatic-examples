@@ -61,6 +61,14 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         }
     }
 
+    /**
+     * Adds a new item to the database and initializes the current object.
+     *
+     * @param string $description Item description.
+     * @param array $date Item date in Innomatic date array format.
+     * @access public
+     * @return void
+     */
     public function addItem($description, $date)
     {
         // Get a sequence number for the new item.
@@ -111,7 +119,9 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
         if ($item->getNumberRows() == 1) {
             $this->description = $item->getFields('description');
-            $this->date = $this->dataAccess->getDateArrayFromTimestamp($item->getFields('itemdate'));
+            $this->date        = $this->dataAccess->getDateArrayFromTimestamp(
+                $item->getFields('itemdate')
+            );
         }
     }
 

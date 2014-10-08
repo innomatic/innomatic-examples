@@ -140,7 +140,7 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
 
         // Update the item in the database.
         //
-        $basicApp = new \Examples\Basic\BasicClass();
+        $basicApp = new \Examples\Basic\BasicClass($eventData['id']);
         $basicApp
             ->setDescription($eventData['description'])
             ->setDate($dateArray);
