@@ -4,46 +4,46 @@ namespace Examples\Basic;
 
 /**
  * Example of a basic class with CRUD operations.
- * 
+ *
  * In this example we use the DataAccessObject pattern.
- * 
+ *
  * Innomatic provides a DAO abstraction with the
  * \Innomatic\Dataaccess\DataAccessObject class.
  */
 class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     /**
      * Innomatic container.
-     * 
+     *
      * @var \Innomatic\Core\InnomaticContainer
      */
     protected $container;
-    
+
     /**
      * Item internal identifier number.
-     * 
+     *
      * @var integer
      */
     protected $itemId;
-    
+
     /**
      * Item description.
-     * 
+     *
      * @var string
      */
     protected $description;
-    
+
     /**
      * Item date.
-     * 
+     *
      * Date is in Innomatic date array.
-     * 
+     *
      * @var array
      */
     protected $date;
 
     /**
      * Class constructor.
-     * 
+     *
      * @param number $id Optional item identifier number.
      */
     public function __construct($id = 0)
@@ -52,7 +52,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         parent::__construct($this->container->getCurrentTenant()->getDataAccess());
 
         $this->itemId = $id;
-        
+
         // If an item id has been given during object creation,
         // fetch the item data from the database.
         //
@@ -92,7 +92,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
     /**
      * Retrieves all the items from the database.
-     * 
+     *
      * @return \Innomatic\Dataaccess\DataAccessResult Items.
      */
     public function findAllItems()
@@ -102,13 +102,13 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
     /**
      * Retrieves the content of an item and set the object attributes.
-     * 
+     *
      * @param integer $id
      */
     public function getItem($id)
     {
-        $item = $this->retrieve('SELECT * FROM example_basic_table WHERE id=$id');
-        
+        $item = $this->retrieve("SELECT * FROM example_basic_table WHERE id=$id");
+
         if ($item->getNumberRows() == 1) {
             $this->description = $item->getFields('description');
             $this->date = $item->getFields('itemdate');
@@ -117,7 +117,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
     /**
      * Returns item identifier number.
-     * 
+     *
      * @return integer
      */
     public function getId()
@@ -127,7 +127,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
     /**
      * Returns item description.
-     * 
+     *
      * @return string
      */
     public function getDescription()
@@ -137,7 +137,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
     /**
      * Returns item date in Innomatic date array format.
-     * 
+     *
      * @return array
      */
     public function getDate()
@@ -147,9 +147,9 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
     /**
      * Sets the item description.
-     * 
+     *
      * This method checks if the item object is valid.
-     * 
+     *
      * @param string $description Item description.
      * @return \Examples\Basic\BasicClass The item object itself.
      */

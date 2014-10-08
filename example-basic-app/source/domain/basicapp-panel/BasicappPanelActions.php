@@ -62,7 +62,7 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
     /**
      * Method for add item action.
      * 
-     * This method is called when the user add a new item.
+     * This method is called when the user adds a new item.
      * 
      * @param array $eventData WUI event data.
      * @access public
@@ -84,6 +84,32 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
         //
         $this->status = $this->catalog->getStr('item_added_status');
 
+        // Update the observers since we changed the status string.
+        //
+        $this->setChanged();
+        $this->notifyObservers('status');
+    }
+    
+    /**
+     * Method for delete item action.
+     *
+     * This method is called when the user deletes an item.
+     *
+     * @param array $eventData WUI event data.
+     * @access public
+     * @return void
+     */
+    public function executeDeleteitem($eventData)
+    {
+        // Remove the item from the database.
+        //
+        $basicApp = new \Examples\Basic\BasicClass($eventData['id']);
+        $basicApp->delete();
+    
+        // Update the panel status bar.
+        //
+        $this->status = $this->catalog->getStr('item_deleted_status');
+    
         // Update the observers since we changed the status string.
         //
         $this->setChanged();

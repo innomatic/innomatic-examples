@@ -215,7 +215,8 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
 
             // Prepare WUI events calls for panel actions.
             //
-            $editAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'edititem', ['id' => $items->getFields('id')] ] ]);
+            $editAction  = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'edititem', ['id' => $items->getFields('id')] ] ]);
+            $deleteAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ], [ 'action', 'deleteitem', ['id' => $items->getFields('id')] ] ]);
 
             $this->pageXml .= '
     <label row="'.$row.'" col="0">
@@ -228,6 +229,26 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
         <label>'.WuiXml::cdata($country->formatShortArrayDate($dateArray)).'</label>
       </args>
     </label>
+    <innomatictoolbar row="'.$row.'" col="2">
+      <args>
+        <frame>false</frame>
+        <toolbars type="array">'.WuiXml::encode([
+            'view' => [
+                'edit' => [
+                    'label' => $this->catalog->getStr('edit_item_button'),
+                    'themeimage' => 'pencil',
+                    'horiz' => 'true',
+                    'action' => $editAction],
+                'delete' => [
+                    'label' => $this->catalog->getStr('delete_item_button'),
+                    'needconfirm' => 'true',
+                    'confirmmessage' => $this->catalog->getStr('delete_confirm_message'),
+                    'themeimage' => 'trash',
+                    'horiz' => 'true',
+                    'action' => $deleteAction]
+            ]]).'</toolbars>
+      </args>
+    </innomatictoolbar>
 ';
 
             // Move to the next item in the data access result.
