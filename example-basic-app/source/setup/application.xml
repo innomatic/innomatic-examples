@@ -1,0 +1,56 @@
+<?xml version='1.0'?>
+<application>
+	<definition>
+		<idname>example-basic-app</idname>
+		<release>
+			<version>1.0.0</version>
+            <date>2014/10/07</date>
+			<changesfile>CHANGES</changesfile>
+		</release>
+		<description>Innomatic example: basic application</description>
+		<category>examples</category>
+		<iconfile></iconfile>
+		<dependencies>
+			<dependency>innomatic[6.4.0]</dependency>
+		</dependencies>
+		<options>
+			<!-- <option></option> -->
+		</options>
+		<legal>
+			<author>
+				<name>Innomatic Company</name>
+				<email>info@innomatic.io</email>
+				<web>http://www.innomatic.io/</web>
+			</author>
+			<copyright>Copyright (c) 2014 Innomatic Company</copyright>
+			<license>New BSD</license>
+			<licensefile>LICENSE</licensefile>
+		</legal>
+		<support>
+			<supportemail>support@innomatic.io</supportemail>
+			<bugsemail>bugs@innomatic.io</bugsemail>
+			<maintainer>
+				<name>Alex Pagnoni</name>
+				<email>alex.pagnoni@innomatic.io</email>
+			</maintainer>
+		</support>
+	</definition>
+	<components>
+
+        <tempdir name="example-basic-app" />
+
+		<domaingroup name="examples"
+			catalog="example-basic-app::misc" />
+
+		<domaintable name="example_basic_table"
+			file="example_basic_table.xml" />
+
+		<domainpanel name="basicapp"
+			catalog="example-basic-app::misc" category="examples" />
+
+		<catalog name="example-basic-app" />
+
+        <class name="examples/basic/BasicClass.php" />
+
+	</components>
+</application>

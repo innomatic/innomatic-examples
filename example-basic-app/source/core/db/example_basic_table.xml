@@ -1,0 +1,13 @@
+<?xml version='1.0'?>
+<database>
+
+    <table name="example_basic_table">
+        <field name="id" type="integer" notnull="1"/>
+        <field name="description" type="text"/>
+        <field name="itemdate" type="timestamp"/>
+        <key field="id"  type="unique"/>
+    </table>
+
+    <sequence name="example_basic_table_id_seq"/>
+
+</database>

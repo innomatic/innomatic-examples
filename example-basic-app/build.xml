@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!--
+  =======================================================================
+
+   Basic App Example build file
+
+   Copyright (c) 2014 Innomatic Company. All rights reserved.
+
+  =======================================================================
+-->
+<project name="Basic App Example" default="build">
+
+	<property name="name" value="example-basic-app" />
+	<property name="version" value="1.0.0" />
+
+     <target name="init" depends="initdir">
+    </target>
+	
+	<target name="initdir">
+        <!-- Create the source directory -->
+        <mkdir dir="source" />
+
+        <!-- Create the different build directories -->
+        <mkdir dir="build" />
+	</target>
+
+	<target name="clean">
+		<!-- Remove old builds -->
+		<delete>
+			<fileset dir="${basedir}/build" includes="**.*" />
+		</delete>
+	</target>
+
+	<target name="package" depends="initdir,clean">
+		<tar destfile="${basedir}/build/${name}-${version}.tgz" compression="gzip">
+			<tarfileset dir="${basedir}/source" prefix="${name}">
+				<exclude name="build/**" />
+				<exclude name="project.index" />
+				<exclude name=".project" />
+				<exclude name=".settings/**" />
+				<exclude name=".cache/**" />
+				<exclude name="build.xml" />
+			</tarfileset>
+		</tar>
+	</target>
+
+	 <!--
+    The default build target for this project. It simply depends on all sub tasks
+    that perform the project build. The sub targets are executed in the listed
+    order.
+    -->
+	<target name="build" depends="init,clean,package" />
+
+	<target name="dev" depends="build">
+        <exec executable="scp">
+            <arg value="${basedir}/build/${name}-${version}.tgz" />
+            <arg value="innomatic-dev:/tmp/" />
+        </exec>
+
+        <exec executable="ssh">
+            <arg value="innomatic-dev" />
+            <arg value="-C" />
+            <arg value="php" />
+            <arg value="/vagrant/dev/innomatic/core/scripts/application.php" />
+            <arg value="deploy" />
+            <arg value="/tmp/${name}-${version}.tgz" />
+        </exec>
+	</target>
+
+</project>
