@@ -61,15 +61,18 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
 
     /**
      * Method for add item action.
-     * 
+     *
      * This method is called when the user adds a new item.
-     * 
+     *
      * @param array $eventData WUI event data.
      * @access public
      * @return void
      */
     public function executeAdditem($eventData)
     {
+        // Build the Innomatic date array from the date timestamp received
+        // from the WUI date widget.
+        //
         $country = new \Innomatic\Locale\LocaleCountry(
             $this->container->getCurrentUser()->getCountry()
         );
@@ -89,7 +92,7 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
         $this->setChanged();
         $this->notifyObservers('status');
     }
-    
+
     /**
      * Method for delete item action.
      *
@@ -105,11 +108,47 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
         //
         $basicApp = new \Examples\Basic\BasicClass($eventData['id']);
         $basicApp->delete();
-    
+
         // Update the panel status bar.
         //
         $this->status = $this->catalog->getStr('item_deleted_status');
-    
+
+        // Update the observers since we changed the status string.
+        //
+        $this->setChanged();
+        $this->notifyObservers('status');
+    }
+
+    /**
+     * Method for edit item action.
+     *
+     * This method is called when the user edits an existing item.
+     *
+     * @param array $eventData WUI event data.
+     * @access public
+     * @return void
+     */
+    public function executeEdititem($eventData)
+    {
+        // Build the Innomatic date array from the date timestamp received
+        // from the WUI date widget.
+        //
+        $country = new \Innomatic\Locale\LocaleCountry(
+            $this->container->getCurrentUser()->getCountry()
+        );
+        $dateArray = $country->getDateArrayFromShortDatestamp($eventData['date']);
+
+        // Update the item in the database.
+        //
+        $basicApp = new \Examples\Basic\BasicClass();
+        $basicApp
+            ->setDescription($eventData['description'])
+            ->setDate($dateArray);
+
+        // Update the panel status bar.
+        //
+        $this->status = $this->catalog->getStr('item_updated_status');
+
         // Update the observers since we changed the status string.
         //
         $this->setChanged();

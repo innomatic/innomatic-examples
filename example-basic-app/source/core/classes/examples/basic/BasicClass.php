@@ -79,7 +79,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
             ')'
         );
 
-        // If the query has been successfull, set the object attributes.
+        // If the query has been successful, set the object attributes.
         //
         if ($result) {
             $this->itemId      = $id;
@@ -111,7 +111,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
         if ($item->getNumberRows() == 1) {
             $this->description = $item->getFields('description');
-            $this->date = $item->getFields('itemdate');
+            $this->date = $this->dataAccess->getDateArrayFromTimestamp($item->getFields('itemdate'));
         }
     }
 

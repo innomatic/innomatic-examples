@@ -378,4 +378,129 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
   </children>
 </vertgroup>';
     }
+
+    /**
+     * Method for edit item view.
+     *
+     * @param array $eventData WUI event data.
+     * @access public
+     * @return void
+     */
+    public function viewEdititem($eventData)
+    {
+        // Build the current date in Innomatic DateArray format.
+        //
+        $country = new \Innomatic\Locale\LocaleCountry(
+            $this->container->getCurrentUser()->getCountry()
+        );
+        $currentDate = $country->getDateArrayFromUnixTimestamp(time());
+
+        // Prepare WUI events calls for panel actions.
+        //
+        $editAction  = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ], [ 'action', 'edititem', [] ] ]);
+        $abortAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ] ]);
+
+        // Get item data.
+        //
+        $item        = new \Examples\Basic\BasicClass($eventData['id']);
+        $description = $item->getDescription();
+        $date        = $item->getDate();
+        print_r($date);
+
+        $this->pageXml = '
+<vertgroup>
+  <children>
+
+    <form>
+      <name>item</name>
+      <args>
+        <action>'.WuiXml::cdata($editAction).'</action>
+      </args>
+      <children>
+
+        <grid>
+          <children>
+
+            <!-- Grid children must declare their position (row and column) as
+                 first and second argument. Argument names are not relevant, but
+                 their order is.
+
+                 Grid also supports horizontal and vertical alignment as third
+                 and fourth optional arguments.
+            -->
+            <label row="0" col="0" halign="right">
+              <args>
+                <label>'.WuiXml::cdata($this->catalog->getStr('description_label')).'</label>
+              </args>
+            </label>
+
+            <text row="0" col="1">
+              <name>description</name>
+              <args>
+                <disp>action</disp>
+                <rows>4</rows>
+                <cols>80</cols>
+                <value>'.WuiXml::cdata($description).'</value>
+              </args>
+            </text>
+
+            <label row="1" col="0" halign="right">
+              <args>
+                <label>'.WuiXml::cdata($this->catalog->getStr('date_label')).'</label>
+              </args>
+            </label>
+
+            <date row="1" col="1">
+              <name>date</name>
+              <args>
+                <disp>action</disp>
+                <!-- This is how we pass arrays in the WUI XML definition.
+                     We set the XML tag "type" attribute to "array" and process
+                     the array with \Shared\Wui\WuiXml::enocde().
+                -->
+                <value type="array">'.WuiXml::encode($date).'</value>
+              </args>
+            </date>
+
+          </children>
+        </grid>
+
+        <horizbar />
+
+        <horizgroup>
+          <args>
+            <width>0%</width>
+          </args>
+          <children>
+
+            <button>
+              <args>
+                <themeimage>buttonok</themeimage>
+                <label>'.WuiXml::cdata($this->catalog->getStr('edit_item_button')).'</label>
+                <horiz>true</horiz>
+                <formsubmit>item</formsubmit>
+                <action>'.WuiXml::cdata($editAction).'</action>
+                <mainaction>true</mainaction>
+              </args>
+            </button>
+
+            <button>
+              <args>
+                <themeimage>buttoncancel</themeimage>
+                <label>'.WuiXml::cdata($this->catalog->getStr('abort_button')).'</label>
+                <horiz>true</horiz>
+                <action>'.WuiXml::cdata($abortAction).'</action>
+              </args>
+            </button>
+
+          </children>
+        </horizgroup>
+
+      </children>
+    </form>
+
+  </children>
+</vertgroup>';
+    }
+
 }
