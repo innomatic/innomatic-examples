@@ -16,6 +16,7 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
      * @access protected
      */
     protected $container;
+
     /**
      * Localized string catalog.
      *
@@ -35,9 +36,14 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
      * This method is executed before calling the method for the requested action.
      */
      public function beginHelper()
-    {
+     {
+        // Set the Innomatic Container inside this object for faster access
+        // to the object.
+        //
         $this->container = InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
 
+        // Set localization catalog for this panel.
+        //
         $this->catalog = new \Innomatic\Locale\LocaleCatalog(
             'example-basic-app::panel',
             $this->container->getCurrentUser()->getLanguage()
@@ -53,6 +59,15 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
     {
     }
 
+    /**
+     * Method for add item action.
+     * 
+     * This method is called when the user add a new item.
+     * 
+     * @param array $eventData WUI event data.
+     * @access public
+     * @return void
+     */
     public function executeAdditem($eventData)
     {
         $country = new \Innomatic\Locale\LocaleCountry(
@@ -60,7 +75,18 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
         );
         $dateArray = $country->getDateArrayFromShortDatestamp($eventData['date']);
 
+        // Add the item to the database.
+        //
         $basicApp = new \Examples\Basic\BasicClass();
         $basicApp->addItem($eventData['description'], $dateArray);
+
+        // Update the panel status bar.
+        //
+        $this->status = $this->catalog->getStr('item_added_status');
+
+        // Update the observers since we changed the status string.
+        //
+        $this->setChanged();
+        $this->notifyObservers('status');
     }
 }

@@ -55,6 +55,11 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
      */
     public function update($observable, $arg = '')
     {
+        switch ($arg) {
+            case 'status':
+                $this->status = $this->controller->getAction()->status;
+                break;
+        }
     }
 
     /**
@@ -155,7 +160,7 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
 
         // The wuiContainer is the main WUI container widget.
         // Panel widgets must be added as children of the WUI container.
-        // Here we add the InnomaticPage widget
+        // Here we add the InnomaticPage widget.
         //
         $this->wuiContainer->addChild($page);
     }
@@ -166,24 +171,97 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
      * This it the default view, it must be always defined.
      *
      * @param array $eventData WUI event data.
+     * @access public
+     * @return void
      */
     public function viewDefault($eventData)
     {
+        // Get all the items from the database.
+        //
         $basicApp = new \Examples\Basic\BasicClass();
         $items = $basicApp->findAllItems();
 
-        $this->pageXml = '';
-    }
+        // Check if there are items in the database.
+        //
+        if ($items->getNumberRows() == 0 && strlen($this->status) == 0) {
+            $this->status = $this->catalog->getStr('no_items_status');
+            return;
+        }
 
-    public function viewAdditem($eventData)
-    {
         $country = new \Innomatic\Locale\LocaleCountry(
             $this->container->getCurrentUser()->getCountry()
         );
 
+        // Build the items table headers.
+        //
+        $headers[0]['label'] = $this->catalog->getStr('description_header');
+        $headers[1]['label'] = $this->catalog->getStr('date_header');
+
+        $this->pageXml = '
+<table>
+  <args>
+    <headers type="array">'.WuiXml::encode($headers).'</headers>
+  </args>
+  <children>';
+
+        $row = 0;
+
+        // Add a row in the table for each item result.
+        //
+        while (!$items->eof) {
+            // Build the date array from the table date in safe timestamp format.
+            //
+            $dateArray = $this->container->getCurrentTenant()->getDataAccess()->getDateArrayFromTimestamp($items->getFields('itemdate'));
+
+            // Prepare WUI events calls for panel actions.
+            //
+            $editAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'edititem', ['id' => $items->getFields('id')] ] ]);
+
+            $this->pageXml .= '
+    <label row="'.$row.'" col="0">
+      <args>
+        <label>'.WuiXml::cdata($items->getFields('description')).'</label>
+      </args>
+    </label>
+    <label row="'.$row.'" col="1">
+      <args>
+        <label>'.WuiXml::cdata($country->formatShortArrayDate($dateArray)).'</label>
+      </args>
+    </label>
+';
+
+            // Move to the next item in the data access result.
+            //
+            $items->moveNext();
+            $row++;
+        }
+
+        $this->pageXml .= '
+  </children>
+</table>
+';
+    }
+
+    /**
+     * Method for add item view.
+     *
+     * @param array $eventData WUI event data.
+     * @access public
+     * @return void
+     */
+    public function viewAdditem($eventData)
+    {
+        // Build the current date in Innomatic DateArray format.
+        //
+        $country = new \Innomatic\Locale\LocaleCountry(
+            $this->container->getCurrentUser()->getCountry()
+        );
+        $currentDate = $country->getDateArrayFromUnixTimestamp(time());
+
+        // Prepare WUI events calls for panel actions.
+        //
         $addAction   = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ], [ 'action', 'additem', [] ] ]);
         $abortAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ] ]);
-        $currentDate = $country->getDateArrayFromUnixTimestamp(time());
 
         $this->pageXml = '
 <vertgroup>
