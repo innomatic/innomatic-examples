@@ -5,6 +5,7 @@
         <field name="id" type="integer" notnull="1"/>
         <field name="description" type="text"/>
         <field name="itemdate" type="timestamp"/>
+        <field name="done" type="boolean"/>
         <key field="id"  type="unique"/>
     </table>
 

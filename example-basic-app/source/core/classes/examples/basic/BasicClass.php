@@ -42,6 +42,14 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     protected $date;
 
     /**
+     * Item done flag.
+     *
+     * @var boolean
+     * @access protected
+     */
+    protected $done = FALSE;
+
+    /**
      * Class constructor.
      *
      * @param number $id Optional item identifier number.
@@ -69,21 +77,30 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
      * @access public
      * @return void
      */
-    public function addItem($description, $date)
+    public function addItem($description, $date, $done)
     {
         // Get a sequence number for the new item.
         //
         $id = $this->dataAccess->getNextSequenceValue('example_basic_table_id_seq');
 
+        $description = $this->dataAccess->formatText($description);
+
+        $date = $this->dataAccess->formatText($this->dataAccess->getTimestampFromDateArray($date));
+
+        $done = $done === TRUE ? $this->dataAccess->fmttrue : $this->dataAccess->fmtfalse;
+        $done = $this->dataAccess->formatText($done);
+
         // Insert the new item in the database.
         // We use the parent class (DataAccessObject) update() method.
         //
         $result = $this->update(
-            'INSERT INTO example_basic_table (id, description, itemdate) '.
+            'INSERT INTO example_basic_table '.
+            '(id, description, itemdate, done) '.
             'VALUES ('.
             $id.','.
-            $this->dataAccess->formatText($description).','.
-            $this->dataAccess->formatText($this->dataAccess->getTimestampFromDateArray($date)).
+            $description.','.
+            $date.','.
+            $done.
             ')'
         );
 
@@ -118,10 +135,33 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         $item = $this->retrieve("SELECT * FROM example_basic_table WHERE id=$id");
 
         if ($item->getNumberRows() == 1) {
+            // This is a string, no need to process it.
+            //
             $this->description = $item->getFields('description');
+
+            // Convert the database safe timestamp field to an Innomatic date
+            // array.
+            //
             $this->date        = $this->dataAccess->getDateArrayFromTimestamp(
                 $item->getFields('itemdate')
             );
+
+            // Convert a database safe boolean field to a PHP boolean.
+            // We use a switch in place of a ternary operator in order to show
+            // both database formats.
+            //
+            switch ($item->getFields('done')) {
+            case $this->dataAccess->fmttrue:
+                $this->done = TRUE;
+                break;
+
+            case $this->dataAccess->fmtfalse:
+                $this->done = FALSE;
+                break;
+
+            default:
+                $this->done = FALSE;
+            }
         }
     }
 
@@ -156,6 +196,16 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     }
 
     /**
+     * Returns item done flag.
+     *
+     * @return boolean
+     */
+    public function getDone()
+    {
+        return $this->done;
+    }
+
+    /**
      * Sets the item description.
      *
      * @param string $description Item description.
@@ -186,6 +236,21 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     }
 
     /**
+     * Sets the item done flag.
+     *
+     * @param boolean $done Item done flag.
+     * @return \Examples\Basic\BasicClass The item object itself.
+     */
+    public function setDone($done)
+    {
+        // Set the object attribute.
+        //
+        $this->done = $done;
+
+        return $this;
+    }
+
+    /**
      * This method stores the object in the database.
      *
      * It must be called after changing one or more object attributes.
@@ -210,12 +275,19 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
             //
             $description = $this->dataAccess->formatText($this->description);
 
+            // Convert a PHP boolean to a database safe boolean field and also
+            // format it since Innomatic database booleans are strings.
+            //
+            $done = $this->done === TRUE ? $this->dataAccess->fmttrue : $this->dataAccess->fmtfalse;
+            $done = $this->dataAccess->formatText($done);
+
             // Update the database row.
             //
             $this->update(
                 'UPDATE example_basic_table '.
                 'SET '.
                 "itemdate    = $itemDate, ".
+                "done        = $done, ".
                 "description = $description ".
                 "WHERE id={$this->itemId}"
             );
@@ -241,9 +313,10 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
             // Empty the item attributes.
             //
-            $this->itemId = 0;
-            $this->date = '';
+            $this->itemId      = 0;
+            $this->date        = '';
             $this->description = '';
+            $this->done        = FALSE;
         }
 
     }

@@ -338,6 +338,19 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
               </args>
             </date>
 
+            <label row="2" col="0" halign="right">
+              <args>
+                <label>'.WuiXml::cdata($this->catalog->getStr('done_label')).'</label>
+              </args>
+            </label>
+
+            <checkbox row="2" col="1">
+              <name>done</name>
+              <args>
+                <disp>action</disp>
+              </args>
+            </checkbox>
+
           </children>
         </grid>
 
@@ -405,7 +418,10 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
         $item        = new \Examples\Basic\BasicClass($eventData['id']);
         $description = $item->getDescription();
         $date        = $item->getDate();
-        print_r($date);
+
+        // Convert PHP boolean to WUI checkbox widget boolean (that is a string).
+        //
+        $done        = $item->getDone() === TRUE ? 'true' : 'false';
 
         $this->pageXml = '
 <vertgroup>
@@ -461,6 +477,20 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
                 <value type="array">'.WuiXml::encode($date).'</value>
               </args>
             </date>
+
+            <label row="2" col="0" halign="right">
+              <args>
+                <label>'.WuiXml::cdata($this->catalog->getStr('done_label')).'</label>
+              </args>
+            </label>
+
+            <checkbox row="2" col="1">
+              <name>done</name>
+              <args>
+                <disp>action</disp>
+                <checked>'.$done.'</checked>
+              </args>
+            </checkbox>
 
           </children>
         </grid>

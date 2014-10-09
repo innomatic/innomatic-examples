@@ -78,10 +78,18 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
         );
         $dateArray = $country->getDateArrayFromShortDatestamp($eventData['date']);
 
+        // Convert boolean from WUI checkbox widget to PHP boolean.
+        //
+        if (isset($eventData['done']) && $eventData['done'] == 'on') {
+            $done = TRUE;
+        } else {
+            $done = FALSE;
+        }
+
         // Add the item to the database.
         //
         $basicApp = new \Examples\Basic\BasicClass();
-        $basicApp->addItem($eventData['description'], $dateArray);
+        $basicApp->addItem($eventData['description'], $dateArray, $done);
 
         // Update the panel status bar.
         //
@@ -138,12 +146,21 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
         );
         $dateArray = $country->getDateArrayFromShortDatestamp($eventData['date']);
 
+        // Convert boolean from WUI checkbox widget to PHP boolean.
+        //
+        if (isset($eventData['done']) && $eventData['done'] == 'on') {
+            $done = TRUE;
+        } else {
+            $done = FALSE;
+        }
+
         // Update the item in the database.
         //
         $basicApp = new \Examples\Basic\BasicClass($eventData['id']);
         $basicApp
             ->setDescription($eventData['description'])
             ->setDate($dateArray)
+            ->setDone($done)
             ->store();
 
         // Update the panel status bar.
