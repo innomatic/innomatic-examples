@@ -143,7 +143,8 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
         $basicApp = new \Examples\Basic\BasicClass($eventData['id']);
         $basicApp
             ->setDescription($eventData['description'])
-            ->setDate($dateArray);
+            ->setDate($dateArray)
+            ->store();
 
         // Update the panel status bar.
         //

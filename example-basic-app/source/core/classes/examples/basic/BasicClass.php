@@ -165,19 +165,9 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
      */
     public function setDescription($description)
     {
-        if ($this->itemId != 0) {
-            // Update the database row.
-            //
-            $this->update(
-                'UPDATE example_basic_table '.
-                'SET description='.$this->dataAccess->formatText($description).' '.
-                "WHERE id={$this->itemId}"
-            );
-
-            // Set the object attribute.
-            //
-            $this->description = $description;
-        }
+        // Set the object attribute.
+        //
+        $this->description = $description;
 
         return $this;
     }
@@ -192,20 +182,30 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
      */
     public function setDate($date)
     {
+        // Set the object attribute.
+        //
+        $this->date = $date;
+
+        return $this;
+    }
+
+    public function store()
+    {
         if ($this->itemId != 0) {
             // Update the database row.
             //
+            $itemDate = $this->dataAccess->formatText(
+                $this->dataAccess->getTimestampFromDateArray($this->date)
+            );
+            $description = $this->dataAccess->formatText($this->description);
+
             $this->update(
                 'UPDATE example_basic_table '.
-                'SET itemdate='.$this->dataAccess->formatText(
-                    $this->dataAccess->getTimestampFromDateArray($date)
-                ).' '.
+                'SET '.
+                "itemdate    = $itemDate, ".
+                "description = $description ".
                 "WHERE id={$this->itemId}"
             );
-
-            // Set the object attribute.
-            //
-            $this->date = $date;
         }
 
         return $this;
