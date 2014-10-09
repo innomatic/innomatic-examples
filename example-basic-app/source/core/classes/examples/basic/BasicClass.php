@@ -35,7 +35,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     /**
      * Item date.
      *
-     * Date is in Innomatic date array.
+     * Date is in Innomatic date array format.
      *
      * @var array
      */
@@ -83,10 +83,17 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         //
         $id = $this->dataAccess->getNextSequenceValue('example_basic_table_id_seq');
 
+        // Format a string for SQL.
+        //
         $descriptionValue = $this->dataAccess->formatText($description);
 
+        // Convert an Innomatic date array to a database safe timestamp.
+        //
         $dateValue = $this->dataAccess->formatText($this->dataAccess->getTimestampFromDateArray($date));
 
+        // Convert a PHP boolean to a database safe boolean field and also
+        // format it since Innomatic database booleans are strings.
+        //
         $doneValue = $done === TRUE ? $this->dataAccess->fmttrue : $this->dataAccess->fmtfalse;
         $doneValue = $this->dataAccess->formatText($doneValue);
 
@@ -104,7 +111,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
             ')'
         );
 
-        // If the query has been successful, set the object attributes.
+        // If the query has been successful, initialize the object attributes.
         //
         if ($result) {
             $this->itemId      = $id;
