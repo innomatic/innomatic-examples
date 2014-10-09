@@ -7,6 +7,7 @@
         <field name="itemdate" type="timestamp"/>
         <field name="done" type="boolean"/>
         <field name="statusid" type="integer"/>
+        <field name="name" type="text"/>
         <key field="id"  type="unique"/>
     </table>
 

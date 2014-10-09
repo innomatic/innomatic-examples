@@ -26,6 +26,14 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     protected $itemId;
 
     /**
+     * Item name.
+     *
+     * @var string
+     * @access protected
+     */
+    protected $name;
+
+    /**
      * Item description.
      *
      * @var string
@@ -100,7 +108,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
      * @access public
      * @return void
      */
-    public function addItem($description, $date, $done, $statusId)
+    public function addItem($name, $description, $date, $done, $statusId)
     {
         // Get a sequence number for the new item.
         //
@@ -108,6 +116,8 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
         // Format a string for SQL.
         //
+        $nameValue = $this->dataAccess->formatText($name);
+
         $descriptionValue = $this->dataAccess->formatText($description);
 
         // Convert an Innomatic date array to a database safe timestamp.
@@ -133,10 +143,11 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         //
         $result = $this->update(
             'INSERT INTO example_basic_table '.
-            '(id, description, itemdate, done, statusid) '.
+            '(id, name, description, itemdate, done, statusid) '.
             'VALUES ('.
             $id.','.
-            $description.','.
+            $nameValue.','.
+            $descriptionValue.','.
             $dateValue.','.
             $doneValue.','.
             $statusIdValue.
@@ -147,6 +158,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         //
         if ($result) {
             $this->itemId      = $id;
+            $this->name        = $name;
             $this->description = $description;
             $this->date        = $date;
             $this->done        = $done;
@@ -189,6 +201,8 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         if ($item->getNumberRows() == 1) {
             // This is a string, no need to process it.
             //
+            $this->name        = $item->getFields('name');
+
             $this->description = $item->getFields('description');
 
             // Convert the database safe timestamp field to an Innomatic date
@@ -230,6 +244,17 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     }
 
     /**
+     * Returns item name.
+     *
+     * @access public
+     * @return name
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Returns item description.
      *
      * @return string
@@ -267,6 +292,21 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     public function getStatusId()
     {
         return $this->statusId;
+    }
+
+    /**
+     * Sets the item name.
+     *
+     * @param string $name Item name
+     * @return \Examples\Basic\BasicClass The item object itself.
+     */
+    public function setName($name)
+    {
+        // Set the object attribute.
+        //
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -358,6 +398,8 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
 
             // Format a string for SQL.
             //
+            $name        = $this->dataAccess->formatText($this->name);
+
             $description = $this->dataAccess->formatText($this->description);
 
             // Convert a PHP boolean to a database safe boolean field and also
@@ -380,6 +422,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
                 'UPDATE example_basic_table '.
                 'SET '.
                 "itemdate    = $itemDate, ".
+                "name        = $name, ".
                 "done        = $done, ".
                 "description = $description, ".
                 "statusid    = $statusId ".

@@ -194,7 +194,7 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
 
         // Build the items table headers.
         //
-        $headers[0]['label'] = $this->catalog->getStr('description_header');
+        $headers[0]['label'] = $this->catalog->getStr('name_header');
         $headers[1]['label'] = $this->catalog->getStr('date_header');
 
         $this->pageXml = '
@@ -221,7 +221,7 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
             $this->pageXml .= '
     <label row="'.$row.'" col="0">
       <args>
-        <label>'.WuiXml::cdata($items->getFields('description')).'</label>
+        <label>'.WuiXml::cdata($items->getFields('name')).'</label>
       </args>
     </label>
     <label row="'.$row.'" col="1">
@@ -317,11 +317,25 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
             -->
             <label row="0" col="0" halign="right">
               <args>
+                <label>'.WuiXml::cdata($this->catalog->getStr('name_label')).'</label>
+              </args>
+            </label>
+
+            <string row="0" col="1">
+              <name>name</name>
+              <args>
+                <disp>action</disp>
+                <size>30</size>
+              </args>
+            </string>
+
+            <label row="1" col="0" halign="right">
+              <args>
                 <label>'.WuiXml::cdata($this->catalog->getStr('description_label')).'</label>
               </args>
             </label>
 
-            <text row="0" col="1">
+            <text row="1" col="1">
               <name>description</name>
               <args>
                 <disp>action</disp>
@@ -330,13 +344,13 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
               </args>
             </text>
 
-            <label row="1" col="0" halign="right">
+            <label row="2" col="0" halign="right">
               <args>
                 <label>'.WuiXml::cdata($this->catalog->getStr('date_label')).'</label>
               </args>
             </label>
 
-            <date row="1" col="1">
+            <date row="2" col="1">
               <name>date</name>
               <args>
                 <disp>action</disp>
@@ -348,26 +362,26 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
               </args>
             </date>
 
-            <label row="2" col="0" halign="right">
+            <label row="3" col="0" halign="right">
               <args>
                 <label>'.WuiXml::cdata($this->catalog->getStr('done_label')).'</label>
               </args>
             </label>
 
-            <checkbox row="2" col="1">
+            <checkbox row="3" col="1">
               <name>done</name>
               <args>
                 <disp>action</disp>
               </args>
             </checkbox>
 
-            <label row="3" col="0" halign="right">
+            <label row="4" col="0" halign="right">
               <args>
                 <label>'.WuiXml::cdata($this->catalog->getStr('status_label')).'</label>
               </args>
             </label>
 
-            <combobox row="3" col="1">
+            <combobox row="4" col="1">
               <name>statusid</name>
               <args>
                 <disp>action</disp>
@@ -440,6 +454,7 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
         // Get item data.
         //
         $item        = new \Examples\Basic\BasicClass($eventData['id']);
+        $name        = $item->getName();
         $description = $item->getDescription();
         $date        = $item->getDate();
         $status      = $item->getStatusId();
@@ -481,11 +496,26 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
             -->
             <label row="0" col="0" halign="right">
               <args>
+                <label>'.WuiXml::cdata($this->catalog->getStr('name_label')).'</label>
+              </args>
+            </label>
+
+            <string row="0" col="1">
+              <name>name</name>
+              <args>
+                <disp>action</disp>
+                <size>30</size>
+                <value>'.WuiXml::cdata($name).'</value>
+              </args>
+            </string>
+
+            <label row="1" col="0" halign="right">
+              <args>
                 <label>'.WuiXml::cdata($this->catalog->getStr('description_label')).'</label>
               </args>
             </label>
 
-            <text row="0" col="1">
+            <text row="1" col="1">
               <name>description</name>
               <args>
                 <disp>action</disp>
@@ -495,13 +525,13 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
               </args>
             </text>
 
-            <label row="1" col="0" halign="right">
+            <label row="2" col="0" halign="right">
               <args>
                 <label>'.WuiXml::cdata($this->catalog->getStr('date_label')).'</label>
               </args>
             </label>
 
-            <date row="1" col="1">
+            <date row="2" col="1">
               <name>date</name>
               <args>
                 <disp>action</disp>
@@ -513,13 +543,13 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
               </args>
             </date>
 
-            <label row="2" col="0" halign="right">
+            <label row="3" col="0" halign="right">
               <args>
                 <label>'.WuiXml::cdata($this->catalog->getStr('done_label')).'</label>
               </args>
             </label>
 
-            <checkbox row="2" col="1">
+            <checkbox row="3" col="1">
               <name>done</name>
               <args>
                 <disp>action</disp>
@@ -527,13 +557,13 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
               </args>
             </checkbox>
 
-            <label row="3" col="0" halign="right">
+            <label row="4" col="0" halign="right">
               <args>
                 <label>'.WuiXml::cdata($this->catalog->getStr('status_label')).'</label>
               </args>
             </label>
 
-            <combobox row="3" col="1">
+            <combobox row="4" col="1">
               <name>statusid</name>
               <args>
                 <disp>action</disp>
