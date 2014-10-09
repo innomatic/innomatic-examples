@@ -50,6 +50,25 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     protected $done = FALSE;
 
     /**
+     * Item status id.
+     *
+     * A list of the available statuses can be fetched with the getStatusList()
+     * method.
+     *
+     * @var integer
+     * @access protected
+     */
+    protected $statusId = 0;
+
+    /**
+     * List of available statuses.
+     *
+     * @var array
+     * @access protected
+     */
+    protected $statusList = [];
+
+    /**
      * Class constructor.
      *
      * @param number $id Optional item identifier number.
@@ -67,6 +86,10 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         if ($id != 0) {
             $this->getItem($id);
         }
+
+        // Build the available status list.
+        //
+        $this->statusList = [0 => 'new', 1 => 'open', 2 => 'in_progress', 3 => 'done'];
     }
 
     /**
@@ -77,7 +100,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
      * @access public
      * @return void
      */
-    public function addItem($description, $date, $done)
+    public function addItem($description, $date, $done, $statusId)
     {
         // Get a sequence number for the new item.
         //
@@ -97,17 +120,26 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         $doneValue = $done === TRUE ? $this->dataAccess->fmttrue : $this->dataAccess->fmtfalse;
         $doneValue = $this->dataAccess->formatText($doneValue);
 
+        // Check if the status id is valid.
+        //
+        if (isset($this->statusList[$statusId])) {
+            $statusIdValue = $statusId;
+        } else {
+            $statusIdValue = 0;
+        }
+
         // Insert the new item in the database.
         // We use the parent class (DataAccessObject) update() method.
         //
         $result = $this->update(
             'INSERT INTO example_basic_table '.
-            '(id, description, itemdate, done) '.
+            '(id, description, itemdate, done, statusid) '.
             'VALUES ('.
             $id.','.
             $description.','.
             $dateValue.','.
-            $doneValue.
+            $doneValue.','.
+            $statusIdValue.
             ')'
         );
 
@@ -118,6 +150,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
             $this->description = $description;
             $this->date        = $date;
             $this->done        = $done;
+            $this->statusId    = $statusValue;
         }
 
         return $result;
@@ -131,6 +164,17 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     public function findAllItems()
     {
         return $this->retrieve('SELECT * FROM example_basic_table');
+    }
+
+    /**
+     * Gets the list of the available item statuses.
+     *
+     * @access public
+     * @return array
+     */
+    public function getStatusList()
+    {
+        return $this->statusList;
     }
 
     /**
@@ -170,6 +214,8 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
             default:
                 $this->done = FALSE;
             }
+
+            $this->statusId = $item->getFields('statusid');
         }
     }
 
@@ -211,6 +257,16 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     public function getDone()
     {
         return $this->done;
+    }
+
+    /**
+     * Returns item status id.
+     *
+     * @return integer
+     */
+    public function getStatusId()
+    {
+        return $this->statusId;
     }
 
     /**
@@ -259,6 +315,27 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     }
 
     /**
+     * Sets the item status id.
+     *
+     * @param integer $statusId Item status id.
+     * @return \Examples\Basic\BasicClass The item object itself.
+     */
+    public function setStatusId($statusId)
+    {
+        // Check if the status id is valid.
+        //
+        if (!isset($this->statusList[$statusId])) {
+            $statusId = 0;
+        }
+
+        // Set the object attribute.
+        //
+        $this->statusId = $statusId;
+
+        return $this;
+    }
+
+    /**
      * This method stores the object in the database.
      *
      * It must be called after changing one or more object attributes.
@@ -289,6 +366,14 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
             $done = $this->done === TRUE ? $this->dataAccess->fmttrue : $this->dataAccess->fmtfalse;
             $done = $this->dataAccess->formatText($done);
 
+            // Check if the status id is valid.
+            //
+            if (isset($this->statusList[$this->statusId])) {
+                $statusId = $this->statusId;
+            } else {
+                $statusId = 0;
+            }
+
             // Update the database row.
             //
             $this->update(
@@ -296,7 +381,8 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
                 'SET '.
                 "itemdate    = $itemDate, ".
                 "done        = $done, ".
-                "description = $description ".
+                "description = $description, ".
+                "statusid    = $statusId ".
                 "WHERE id={$this->itemId}"
             );
         }

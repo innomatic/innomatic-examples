@@ -6,6 +6,7 @@
         <field name="description" type="text"/>
         <field name="itemdate" type="timestamp"/>
         <field name="done" type="boolean"/>
+        <field name="statusid" type="integer"/>
         <key field="id"  type="unique"/>
     </table>
 

@@ -89,7 +89,7 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
         // Add the item to the database.
         //
         $basicApp = new \Examples\Basic\BasicClass();
-        $basicApp->addItem($eventData['description'], $dateArray, $done);
+        $basicApp->addItem($eventData['description'], $dateArray, $done, $eventData['statusid']);
 
         // Update the panel status bar.
         //
@@ -161,6 +161,7 @@ class BasicappPanelActions extends \Innomatic\Desktop\Panel\PanelActions
             ->setDescription($eventData['description'])
             ->setDate($dateArray)
             ->setDone($done)
+            ->setStatusId($eventData['statusid'])
             ->store();
 
         // Update the panel status bar.

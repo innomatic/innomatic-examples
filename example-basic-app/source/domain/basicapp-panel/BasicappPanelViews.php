@@ -284,6 +284,16 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
         $addAction   = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ], [ 'action', 'additem', [] ] ]);
         $abortAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ] ]);
 
+        // Build the status list.
+        //
+        $item       = new \Examples\Basic\BasicClass();
+        $statusList = $item->getStatusList();
+
+        $statusArray = [];
+        foreach ($statusList as $statusId => $statusName) {
+            $statusArray[$statusId] = $this->catalog->getStr($statusName.'_status');
+        }
+
         $this->pageXml = '
 <vertgroup>
   <children>
@@ -350,6 +360,20 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
                 <disp>action</disp>
               </args>
             </checkbox>
+
+            <label row="3" col="0" halign="right">
+              <args>
+                <label>'.WuiXml::cdata($this->catalog->getStr('status_label')).'</label>
+              </args>
+            </label>
+
+            <combobox row="3" col="1">
+              <name>statusid</name>
+              <args>
+                <disp>action</disp>
+                <elements type="array">'.WuiXml::encode($statusArray).'</elements>
+              </args>
+            </combobox>
 
           </children>
         </grid>
@@ -418,10 +442,21 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
         $item        = new \Examples\Basic\BasicClass($eventData['id']);
         $description = $item->getDescription();
         $date        = $item->getDate();
+        $status      = $item->getStatusId();
 
         // Convert PHP boolean to WUI checkbox widget boolean (that is a string).
         //
         $done        = $item->getDone() === TRUE ? 'true' : 'false';
+
+        // Build the status list.
+        //
+        $item       = new \Examples\Basic\BasicClass();
+        $statusList = $item->getStatusList();
+
+        $statusArray = [];
+        foreach ($statusList as $statusId => $statusName) {
+            $statusArray[$statusId] = $this->catalog->getStr($statusName.'_status');
+        }
 
         $this->pageXml = '
 <vertgroup>
@@ -491,6 +526,21 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
                 <checked>'.$done.'</checked>
               </args>
             </checkbox>
+
+            <label row="3" col="0" halign="right">
+              <args>
+                <label>'.WuiXml::cdata($this->catalog->getStr('status_label')).'</label>
+              </args>
+            </label>
+
+            <combobox row="3" col="1">
+              <name>statusid</name>
+              <args>
+                <disp>action</disp>
+                <elements type="array">'.WuiXml::encode($statusArray).'</elements>
+                <default>'.$status.'</default>
+              </args>
+            </combobox>
 
           </children>
         </grid>
