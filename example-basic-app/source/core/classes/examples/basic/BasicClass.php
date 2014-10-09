@@ -158,8 +158,6 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     /**
      * Sets the item description.
      *
-     * This method checks if the item object is valid.
-     *
      * @param string $description Item description.
      * @return \Examples\Basic\BasicClass The item object itself.
      */
@@ -175,8 +173,6 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
     /**
      * Sets the item date.
      *
-     * This method checks if the item object is valid.
-     *
      * @param array $date Date in Innomatic array date format.
      * @return \Examples\Basic\BasicClass The item object itself.
      */
@@ -189,16 +185,33 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         return $this;
     }
 
+    /**
+     * This method stores the object in the database.
+     *
+     * It must be called after changing one or more object attributes.
+     *
+     * This method checks if the item object is valid.
+     *
+     * @access public
+     * @return \Examples\Basic\BasicClass The item object itself.
+     */
     public function store()
     {
         if ($this->itemId != 0) {
-            // Update the database row.
+            // Prepare the values.
+
+            // Convert an Innomatic date array to a database safe timestamp.
             //
             $itemDate = $this->dataAccess->formatText(
                 $this->dataAccess->getTimestampFromDateArray($this->date)
             );
+
+            // Format a string for SQL.
+            //
             $description = $this->dataAccess->formatText($this->description);
 
+            // Update the database row.
+            //
             $this->update(
                 'UPDATE example_basic_table '.
                 'SET '.
