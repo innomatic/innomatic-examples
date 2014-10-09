@@ -83,12 +83,12 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
         //
         $id = $this->dataAccess->getNextSequenceValue('example_basic_table_id_seq');
 
-        $description = $this->dataAccess->formatText($description);
+        $descriptionValue = $this->dataAccess->formatText($description);
 
-        $date = $this->dataAccess->formatText($this->dataAccess->getTimestampFromDateArray($date));
+        $dateValue = $this->dataAccess->formatText($this->dataAccess->getTimestampFromDateArray($date));
 
-        $done = $done === TRUE ? $this->dataAccess->fmttrue : $this->dataAccess->fmtfalse;
-        $done = $this->dataAccess->formatText($done);
+        $doneValue = $done === TRUE ? $this->dataAccess->fmttrue : $this->dataAccess->fmtfalse;
+        $doneValue = $this->dataAccess->formatText($doneValue);
 
         // Insert the new item in the database.
         // We use the parent class (DataAccessObject) update() method.
@@ -99,8 +99,8 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
             'VALUES ('.
             $id.','.
             $description.','.
-            $date.','.
-            $done.
+            $dateValue.','.
+            $doneValue.
             ')'
         );
 
@@ -110,6 +110,7 @@ class BasicClass extends \Innomatic\Dataaccess\DataAccessObject {
             $this->itemId      = $id;
             $this->description = $description;
             $this->date        = $date;
+            $this->done        = $done;
         }
 
         return $result;
