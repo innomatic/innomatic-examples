@@ -110,7 +110,7 @@
             <button>
               <args>
                 <themeimage>buttonok</themeimage>
-                <label><?=$addItemLabel?></label>
+                <label><?=$editItemLabel?></label>
                 <horiz>true</horiz>
                 <formsubmit>item</formsubmit>
                 <action><?=$editAction?></action>

@@ -194,14 +194,8 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
         //
         $headers[0]['label'] = $this->catalog->getStr('name_header');
         $headers[1]['label'] = $this->catalog->getStr('date_header');
-
-        $this->pageXml = '
-<table>
-  <args>
-    <headers type="array">'.WuiXml::encode($headers).'</headers>
-  </args>
-  <children>';
-
+        $this->tpl->set('headers', $headers);
+        
         $row = 0;
 
         // Add a row in the table for each item result.
@@ -216,49 +210,31 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
             $editAction  = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'edititem', ['id' => $items->getFields('id')] ] ]);
             $deleteAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ], [ 'action', 'deleteitem', ['id' => $items->getFields('id')] ] ]);
 
-            $this->pageXml .= '
-    <label row="'.$row.'" col="0">
-      <args>
-        <label>'.WuiXml::cdata($items->getFields('name')).'</label>
-      </args>
-    </label>
-    <label row="'.$row.'" col="1">
-      <args>
-        <label>'.WuiXml::cdata($country->formatShortArrayDate($dateArray)).'</label>
-      </args>
-    </label>
-    <innomatictoolbar row="'.$row.'" col="2">
-      <args>
-        <frame>false</frame>
-        <toolbars type="array">'.WuiXml::encode([
-            'view' => [
-                'edit' => [
-                    'label' => $this->catalog->getStr('edit_item_button'),
-                    'themeimage' => 'pencil',
-                    'horiz' => 'true',
-                    'action' => $editAction],
-                'delete' => [
-                    'label' => $this->catalog->getStr('delete_item_button'),
-                    'needconfirm' => 'true',
-                    'confirmmessage' => $this->catalog->getStr('delete_confirm_message'),
-                    'themeimage' => 'trash',
-                    'horiz' => 'true',
-                    'action' => $deleteAction]
-            ]]).'</toolbars>
-      </args>
-    </innomatictoolbar>
-';
+            $itemsArray[$row]['name'] = $items->getFields('name');
+            $itemsArray[$row]['dateArray'] = $country->formatShortArrayDate($dateArray);
+            $itemsArray[$row]['toolbar'] =  [
+                'view' => [
+                    'edit' => [
+                        'label' => $this->catalog->getStr('edit_item_button'),
+                        'themeimage' => 'pencil',
+                        'horiz' => 'true',
+                        'action' => $editAction],
+                    'delete' => [
+                        'label' => $this->catalog->getStr('delete_item_button'),
+                        'needconfirm' => 'true',
+                        'confirmmessage' => $this->catalog->getStr('delete_confirm_message'),
+                        'themeimage' => 'trash',
+                        'horiz' => 'true',
+                        'action' => $deleteAction]
+                ]];
 
             // Move to the next item in the data access result.
             //
             $items->moveNext();
             $row++;
         }
-
-        $this->pageXml .= '
-  </children>
-</table>
-';
+        
+        $this->tpl->setArray('itemsArray', $itemsArray);
     }
 
     /**
@@ -322,7 +298,7 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
         $abortAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ] ]);
 
         $this->tpl->set('editAction',    $editAction);
-        $this->tpl->set('editItemLabel', $this->catalog->getStr('edititem_button'));
+        $this->tpl->set('editItemLabel', $this->catalog->getStr('edit_item_button'));
         $this->tpl->set('abortAction',   $abortAction);
         $this->tpl->set('abortLabel',    $this->catalog->getStr('abort_button'));
 
