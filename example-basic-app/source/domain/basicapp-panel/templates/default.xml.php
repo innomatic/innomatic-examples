@@ -1,9 +1,16 @@
 <table>
   <args>
+    <!-- When the value is an array passed with the set() method,
+    you must set the type="array" attribute in the XML tag, since the
+    $headers variable has been transformed to a serialized array.
+     -->
     <headers type="array"><?=$headers?></headers>
   </args>
   <children>
 
+<!-- Since $itemsArray has been passed with the setArray() method,
+you get it as a PHP array and not as a serialized array.
+ -->
 <?php foreach($itemsArray as $row => $item): ?>
 
     <label row="<?=$row?>" col="0">
