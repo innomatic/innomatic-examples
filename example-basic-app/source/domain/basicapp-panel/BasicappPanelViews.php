@@ -151,9 +151,7 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
         $page = new WuiInnomaticPage('page', [
             'pagetitle' => $this->pageTitle,
             'icon' => 'documentcopy',
-            'maincontent' => new WuiXml('content', [
-                'definition' => $this->pageXml
-            ]),
+            'maincontent' => $this->wuiPanelContent,
             'status' => $this->status,
             'toolbars' => $toolbars
         ]);
@@ -278,12 +276,18 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
             $this->container->getCurrentUser()->getCountry()
         );
         $currentDate = $country->getDateArrayFromUnixTimestamp(time());
+        $this->tpl->set('currentDate', $currentDate);
 
         // Prepare WUI events calls for panel actions.
         //
         $addAction   = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ], [ 'action', 'additem', [] ] ]);
         $abortAction = WuiEventsCall::buildEventsCallString('', [ [ 'view', 'default', [] ] ]);
 
+        $this->tpl->set('addAction',   $addAction);
+        $this->tpl->set('abortAction', $abortAction);
+        $this->tpl->set('addItemLabel', $this->catalog->getStr('additem_button'));
+        $this->tpl->set('abortLabel', $this->catalog->getStr('abort_button'));
+        
         // Build the status list.
         //
         $item       = new \Examples\Basic\BasicClass();
@@ -294,140 +298,13 @@ class BasicappPanelViews extends \Innomatic\Desktop\Panel\PanelViews
             $statusArray[$statusId] = $this->catalog->getStr($statusName.'_status');
         }
 
-        $this->pageXml = '
-<vertgroup>
-  <children>
+        $this->tpl->set('statusArray', $statusArray);
+        $this->tpl->set('statusLabel', $this->catalog->getStr('status_label'));
 
-    <form>
-      <name>item</name>
-      <args>
-        <action>'.WuiXml::cdata($addAction).'</action>
-      </args>
-      <children>
-
-        <grid>
-          <children>
-
-            <!-- Grid children must declare their position (row and column) as
-                 first and second argument. Argument names are not relevant, but
-                 their order is.
-
-                 Grid also supports horizontal and vertical alignment as third
-                 and fourth optional arguments.
-            -->
-            <label row="0" col="0" halign="right">
-              <args>
-                <label>'.WuiXml::cdata($this->catalog->getStr('name_label')).'</label>
-              </args>
-            </label>
-
-            <string row="0" col="1">
-              <name>name</name>
-              <args>
-                <disp>action</disp>
-                <size>30</size>
-              </args>
-            </string>
-
-            <label row="1" col="0" halign="right">
-              <args>
-                <label>'.WuiXml::cdata($this->catalog->getStr('description_label')).'</label>
-              </args>
-            </label>
-
-            <text row="1" col="1">
-              <name>description</name>
-              <args>
-                <disp>action</disp>
-                <rows>4</rows>
-                <cols>80</cols>
-              </args>
-            </text>
-
-            <label row="2" col="0" halign="right">
-              <args>
-                <label>'.WuiXml::cdata($this->catalog->getStr('date_label')).'</label>
-              </args>
-            </label>
-
-            <date row="2" col="1">
-              <name>date</name>
-              <args>
-                <disp>action</disp>
-                <!-- This is how we pass arrays in the WUI XML definition.
-                     We set the XML tag "type" attribute to "array" and process
-                     the array with \Shared\Wui\WuiXml::enocde().
-                -->
-                <value type="array">'.WuiXml::encode($currentDate).'</value>
-              </args>
-            </date>
-
-            <label row="3" col="0" halign="right">
-              <args>
-                <label>'.WuiXml::cdata($this->catalog->getStr('done_label')).'</label>
-              </args>
-            </label>
-
-            <checkbox row="3" col="1">
-              <name>done</name>
-              <args>
-                <disp>action</disp>
-              </args>
-            </checkbox>
-
-            <label row="4" col="0" halign="right">
-              <args>
-                <label>'.WuiXml::cdata($this->catalog->getStr('status_label')).'</label>
-              </args>
-            </label>
-
-            <combobox row="4" col="1">
-              <name>statusid</name>
-              <args>
-                <disp>action</disp>
-                <elements type="array">'.WuiXml::encode($statusArray).'</elements>
-              </args>
-            </combobox>
-
-          </children>
-        </grid>
-
-        <horizbar />
-
-        <horizgroup>
-          <args>
-            <width>0%</width>
-          </args>
-          <children>
-
-            <button>
-              <args>
-                <themeimage>buttonok</themeimage>
-                <label>'.WuiXml::cdata($this->catalog->getStr('additem_button')).'</label>
-                <horiz>true</horiz>
-                <formsubmit>item</formsubmit>
-                <action>'.WuiXml::cdata($addAction).'</action>
-                <mainaction>true</mainaction>
-              </args>
-            </button>
-
-            <button>
-              <args>
-                <themeimage>buttoncancel</themeimage>
-                <label>'.WuiXml::cdata($this->catalog->getStr('abort_button')).'</label>
-                <horiz>true</horiz>
-                <action>'.WuiXml::cdata($abortAction).'</action>
-              </args>
-            </button>
-
-          </children>
-        </horizgroup>
-
-      </children>
-    </form>
-
-  </children>
-</vertgroup>';
+        $this->tpl->set('nameLabel', $this->catalog->getStr('name_label'));
+        $this->tpl->set('descriptionLabel', $this->catalog->getStr('description_label'));
+        $this->tpl->set('dateLabel', $this->catalog->getStr('date_label'));
+        $this->tpl->set('doneLabel', $this->catalog->getStr('done_label'));
     }
 
     /**
