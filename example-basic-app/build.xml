@@ -12,6 +12,9 @@
 
 	<property name="name" value="example-basic-app" />
 	<property name="version" value="1.0.0" />
+	<!-- Change this parameter if you have a different name in ~/.ssh/config
+	     for your Innomatic Vagrant machine in development environment. -->
+	<property name="vagrant-hostname" value="innomatic-vagrant" />
 
      <target name="init" depends="initdir">
     </target>
@@ -58,7 +61,7 @@
         </exec>
 
         <exec executable="ssh">
-            <arg value="innomatic-dev" />
+            <arg value="${vagrant-hostname}" />
             <arg value="-C" />
             <arg value="php" />
             <arg value="/vagrant/dev/innomatic/core/scripts/application.php" />
