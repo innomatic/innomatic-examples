@@ -8,7 +8,8 @@ For each example an Ant build.xml file has been provided.
 
 To build an application you should enter the example folder in the command line and launch build. An application package will be created inside the application build directory.
 
-You can then deploy the example following the instructions at the Innomatic public documentation site here: http://wiki.innomatic.io/install_and_upgrade_applications
+You can then deploy the example following the instructions at the Innomatic public documentation site here:
+https://innomatic.atlassian.net/wiki/display/IMP/Step+2%3A+Deploying+applications
 
 ## Examples
 
